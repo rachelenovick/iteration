@@ -153,6 +153,34 @@ Iterate using `map`
 map(pull(listcol_df, sample), mean_and_sd)
 ```
 
+What if i want to add a column to my input dataframe, and that new column has the output?
+
+Adding a column ...
+
+```{r}
+listcol_df =
+  listcol_df |> 
+  mutate(
+    summary = map(sample, mean_and_sd)
+  )
+
+pull(listcol_df, summary)
+```
+
+
+USEFUL!! UNNEST
+
+```{r}
+listcol_df |> 
+  select(-sample) |> 
+  unnest(summary) #separates into 2 columns the mean and sd
+```
+
+
+
+
+
+
 
 
 
