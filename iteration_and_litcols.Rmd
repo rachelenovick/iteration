@@ -230,6 +230,19 @@ Do this with `map`
 map(1:3, nsduh_import, html = nsduh_html) #have to add html argument
 ```
 
+Do this all in a dataframe
+
+```{r}
+nsduh_df =
+  tibble(
+    name = c("marj year", "marj month", "marj first"),
+    number = 1:3
+  ) |> 
+  mutate(
+    table = map(number, nsduh_import, html = nsduh_html)
+  ) |> 
+  unnest(table)
+```
 
 
 
