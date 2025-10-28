@@ -1,29 +1,123 @@
 ---
 title: "iteration_and_listcols"
-output: html_document
+output: github_document
 date: "2025-10-28"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(tidyverse)
+library(rvest)
 ```
 
-## R Markdown
+## Make a list
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+#this has to be a list, can't be a dataframe, because each vector is of different length
+l = 
+  list(
+    vec_numeric = 1:23,
+    char_vec = c("Rachel"),
+    mat = matrix(1:8, nrow = 2, ncol = 4),
+    summary = summary(rnorm(1000, mean = 4))
+  )
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+l
 
-```{r cars}
-summary(cars)
+l[[1]] #gives just the first vector
+l[["vec_numeric"]] #call it by name and get it returned
+l$mat #another way of pulling stuff out, not the most preferred way
+
 ```
 
-## Including Plots
+## Make a different list
 
-You can also embed plots, for example:
+```{r}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+list_normals = 
+  list(
+    a = rnorm(30, mean = 3, sd = 1),
+    b = rnorm(30, mean = 30, sd = 1),
+    c = rnorm(30, mean = 3, sd = 10),
+    d = rnorm(30, mean = -3, sd = 4)
+  )
+
+list_normals
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+(copy and paste the function from last time)
+
+```{r}
+mean_and_sd = function(x) {
+  
+  if(!is.numeric(x)) {
+    error("The input x should be numeric")
+  } 
+  
+  if (length(x) < 5) {
+    stop("Only compute mean and sd when the input has 5 or more values")
+  }
+  
+  mean_x = mean(x, na.rm = TRUE)
+  sd_x = sd(x, na.rm = TRUE)
+  
+  tibble(
+    mean = mean_x,
+    sd = sd_x
+  )
+  
+}
+```
+
+```{r}
+
+mean_and_sd(list_normals[[1]])
+mean_and_sd(list_normals[[2]])
+mean_and_sd(list_normals[[3]])
+mean_and_sd(list_normals[[4]])
+
+```
+
+But this is inefficient, maybe let's create a for loop so we don't have to separately type the code a bunch of time.
+
+Use a loop to iterate!
+
+```{r}
+
+output = vector("list", length = 4)
+
+for (i in 1:4) {
+  
+  output[[i]] = mean_and_sd(list_normals[[i]])
+  
+}
+
+output
+#same effect as code above but way more efficient
+```
+
+Use `map` to do the same thing.
+
+```{r}
+output = map(list_normals, mean_and_sd) 
+#syntax: output = map(input, function)
+
+#wow! even MORE efficient!
+
+output = map(list_normals, median) #same thing, different function
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
