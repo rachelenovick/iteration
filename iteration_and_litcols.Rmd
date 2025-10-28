@@ -244,13 +244,72 @@ nsduh_df =
   unnest(table)
 ```
 
+## Look at weather data
+
+```{r}
+library(p8105.datasets)
+data("weather_df")
+```
+
+```{r}
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+Let's do a regression
+
+```{r}
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  lm(tmax ~ tmin, data = _)
+
+weather_df |> 
+  filter(name == "Molokai_HI") |> 
+  lm(tmax ~ tmin, data = _)
+
+weather_df |> 
+  filter(name == "Waterhole_WA") |> 
+  lm(tmax ~ tmin, data = _)
+```
+
+Let's iterate differently...
+```{r}
+weather_nest =
+  weather_df |> 
+  nest(data = date:tmin) #OPPOSITE OF UNNEST! COLLAPSE DOWN
+```
+
+```{r}
+lm(tmax ~ tmin, data = pull(weather_nest, data)[[1]])
+#pulls out the data column from weather_nest, and just take the first list element (central park)
+lm(tmax ~ tmin, data = pull(weather_nest, data)[[2]])
+lm(tmax ~ tmin, data = pull(weather_nest, data)[[3]])
+```
+
+Do this using `map`...
+
+```{r}
+weather_lm = function(df) {
+  
+  lm(tmax ~ tmin, data = df)
+  
+}
+```
 
 
+```{r}
+map(pull(weather_nest, data), weather_lm)
+```
 
-
-
-
-
+```{r}
+weather_nest |> 
+  mutate(
+    lm_fits = map(data, weather_lm)
+  )
+```
 
 
 
