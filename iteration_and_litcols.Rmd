@@ -107,10 +107,51 @@ output = map(list_normals, mean_and_sd)
 output = map(list_normals, median) #same thing, different function
 ```
 
+Check out some `map` variants
 
+```{r}
+map_dfr(list_normals, mean_and_sd) #creates a dataframe out of the output
 
+map_dfr(list_normals, mean_and_sd, .id = "sample") #keeps the id variable
 
+map_dbl(list_normals, median) #if the output will be a single number can use map_dbl
+```
 
+##LIST COLUMNS
+
+Try to put my list into a dataframe!!
+
+```{r}
+#can put these 2 things into a dataframe because they both have length 4
+listcol_df =
+  tibble(
+    name = c("a", "b", "c", "d"),
+    sample = list_normals
+  )
+```
+
+Did this really work?
+
+```{r}
+pull(listcol_df, sample)
+
+pull(listcol_df, name)
+```
+
+Can I apply `mean_and_sd`??
+
+```{r}
+mean_and_sd(pull(listcol_df, sample)[[1]])
+mean_and_sd(pull(listcol_df, sample)[[2]])
+mean_and_sd(pull(listcol_df, sample)[[3]])
+mean_and_sd(pull(listcol_df, sample)[[4]])
+```
+
+Iterate using `map`
+
+```{r}
+map(pull(listcol_df, sample), mean_and_sd)
+```
 
 
 
