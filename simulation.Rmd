@@ -1,0 +1,87 @@
+---
+title: "simulation"
+output: html_document
+date: "2025-10-30"
+---
+
+```{r}
+library(tidyverse)
+
+source("sim_mean_sd.R")
+
+set.seed(1)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+We can simulate by running our function
+
+```{r}
+sim_mean_sd(n_subj = 400)
+```
+
+Can I "verify" the central limit theorem?
+
+```{r}
+output = vector("list", length = 100)
+
+for (i in 1:100) {
+  
+  output[[i]] = sim_mean_sd(30)
+  
+}
+
+output |> 
+  bind_rows() |>  #stacks up all the individual dataframes
+  ggplot(aes(x = mu_hat)) +
+  geom_density()
+```
+
+Try to repeat with a map statement
+
+```{r}
+sim_results_df = 
+  expand_grid(
+    sample_size = 30, #input list, use 30 every single time
+    iter = 1:100 #do this 100 times
+ ) |> 
+  mutate(
+    results = map(iter, sim_mean_sd, n_subj = 30) #run sim_mean_sd for every sample size in that column (in this case it's 30 every time, 100 times). saving the results as a dataframe for each of the 100 times you ran the sim.
+  ) |> 
+  unnest(results) #take all the df's and make it just the sample mean and sd
+```
+
+
+```{r}
+sim_results_df = 
+  expand_grid(
+    sample_size = 30, 
+    iter = 1:100 
+ ) |> 
+  mutate(
+    results = map(iter, sim_mean_sd, n_subj = 30)
+  ) |> 
+  unnest(results)
+```
+
+
+
+
+
+

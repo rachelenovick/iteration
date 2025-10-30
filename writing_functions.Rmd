@@ -160,6 +160,14 @@ sim_mean_sd = function(n_subj=30, mu = 3, sigma = 2){
 }
 ```
 
+(we wrote this in a code chunk last time; now it's being sourced) 
+now I can delete that code chunk above....
+
+```{r}
+source("sim_mean_sd.R")
+```
+
+
 Let's run this function
 
 ```{r}
