@@ -67,19 +67,31 @@ sim_results_df =
   unnest(results) #take all the df's and make it just the sample mean and sd
 ```
 
+repeat with a bigger sample size
 
 ```{r}
 sim_results_df = 
   expand_grid(
-    sample_size = 30, 
-    iter = 1:100 
+    sample_size = c(30, 60, 90, 120), #i'm doing 100 iterations for each sample size
+    iter = 1:1000 
  ) |> 
   mutate(
-    results = map(iter, sim_mean_sd, n_subj = 30)
+    results = map(sample_size, sim_mean_sd)
   ) |> 
   unnest(results)
 ```
 
+Let's look at this
+
+```{r}
+sim_results_df |> 
+  mutate(
+    sample_size = str_c("n = ", sample_size),
+    sample_size = fct_inorder(sample_size)
+  ) |> 
+  ggplot(aes(x = sample_size, y = mu_hat)) +
+  geom_violin()
+```
 
 
 
